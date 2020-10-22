@@ -1,0 +1,13 @@
+{
+  "domain": "gazpar",
+  "name": "Gazpar",
+  "documentation": "",
+  "requirements": [
+    "requests==2.24.0",
+    "lxml==4.6.1"
+  ],
+  "dependencies": [],
+  "codeowners": [
+    "cyprieng"
+  ]
+}
