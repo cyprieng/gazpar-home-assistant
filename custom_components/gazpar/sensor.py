@@ -88,7 +88,7 @@ class GazparAccount:
             session = gazpar.login(self._username, self._password)
             data = gazpar.get_data_per_day(session,
                                            datetime.now().replace(day=1).strftime('%d/%m/%Y'),
-                                           datetime.now().replace(day=31).strftime('%d/%m/%Y'))
+                                           datetime.now().strftime('%d/%m/%Y'))
             _LOGGER.debug('data={0}'.format(json.dumps(data, indent=2)))
 
             last_kwh = int(data[-1]['conso'])
