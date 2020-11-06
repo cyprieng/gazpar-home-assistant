@@ -90,6 +90,7 @@ class GazparAccount:
                                            datetime.now().replace(day=1).strftime('%d/%m/%Y'),
                                            datetime.now().strftime('%d/%m/%Y'))
             _LOGGER.debug('data={0}'.format(json.dumps(data, indent=2)))
+            data = [d for d in data if datetime.strptime(d['time'], '%d/%m/%Y') >= datetime.now().replace(day=1)]
 
             last_kwh = int(data[-1]['conso'])
             month_kwh = sum([int(d['conso']) for d in data])
