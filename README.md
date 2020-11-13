@@ -5,9 +5,18 @@ This module show your Gazpar consumption inside home assistant:
 
 It is based on [empierre/domoticz_gaspar](https://github.com/empierre/domoticz_gaspar).
 
-## Getting started
+
+## Install
+
+### HACS (recommended)
+
+You can install this custom component using [HACS](https://hacs.xyz/) by adding a custom repository.
+
+### Manual install
 
 Copy this repository inside `config/custom_components/gazpar`.
+
+## Configuration
 
 Add this to your `configuration.yaml`:
 
@@ -20,8 +29,8 @@ sensor:
 ```
 
 This will create 4 sensors:
-* last day kWH
+* last day kWh
 * last day EUR
-* last month kWH
+* last month kWh
 * last month EUR
  
