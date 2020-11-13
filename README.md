@@ -31,6 +31,6 @@ sensor:
 This will create 4 sensors:
 * last day kWh
 * last day EUR
-* last month kWh
-* last month EUR
+* current month kWh
+* current month EUR
  
