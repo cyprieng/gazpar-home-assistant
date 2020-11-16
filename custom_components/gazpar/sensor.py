@@ -3,7 +3,7 @@ import json
 import logging
 import traceback
 
-import custom_components.gazpar.gazpar as gazpar
+from custom_components.gazpar.gazpar import Gazpar
 import voluptuous as vol
 
 from homeassistant.components.sensor import PLATFORM_SCHEMA
@@ -85,15 +85,14 @@ class GazparAccount:
 
         try:
             # Get full month data
-            session = gazpar.login(self._username, self._password)
-            data = gazpar.get_data_per_day(session,
-                                           datetime.now().replace(day=1).strftime('%d/%m/%Y'),
+            gazpar = Gazpar(self._username, self._password)
+            data = gazpar.get_data_per_day(datetime.now().replace(day=1).strftime('%d/%m/%Y'),
                                            datetime.now().strftime('%d/%m/%Y'))
             _LOGGER.debug('data={0}'.format(json.dumps(data, indent=2)))
             data = [d for d in data if datetime.strptime(d['time'], '%d/%m/%Y') >= datetime.now().replace(day=1)]
 
-            last_kwh = int(data[-1]['conso'])
-            month_kwh = sum([int(d['conso']) for d in data])
+            last_kwh = int(data[-1]['kwh'])
+            month_kwh = sum([int(d['kwh']) for d in data])
             timestamp = datetime.strptime(data[-1]['time'], '%d/%m/%Y')
 
             # Update sensors
