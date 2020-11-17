@@ -64,7 +64,7 @@ class GazparServiceException(Exception):
 
 
 class Gazpar:
-    @retry(Exception, tries=4)
+    @retry(Exception, tries=4, delay=60, backoff=3)
     def __init__(self, username, password):
         """Init gazpar session
 
@@ -144,7 +144,7 @@ class Gazpar:
         """Retrieve yearly energy consumption data."""
         return self._get_data('Mois')
 
-    @retry(Exception, tries=4)
+    @retry(Exception, tries=4, delay=60, backoff=3)
     def _get_data(self, resource_id, start_date=None, end_date=None):
         """Get gazpar data
 
