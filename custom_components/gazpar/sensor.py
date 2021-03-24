@@ -86,10 +86,17 @@ class GazparAccount:
         try:
             # Get full month data
             gazpar = Gazpar(self._username, self._password)
-            data = gazpar.get_data_per_day(datetime.now().replace(day=1).strftime('%d/%m/%Y'),
-                                           datetime.now().strftime('%d/%m/%Y'))
-            _LOGGER.debug('data={0}'.format(json.dumps(data, indent=2)))
-            data = [d for d in data if datetime.strptime(d['time'], '%d/%m/%Y') >= datetime.now().replace(day=1)]
+
+            data = []
+            for day in range(1, datetime.now().day, 10):
+                data += gazpar.get_data_per_day(datetime.now().replace(day=day).strftime('%d/%m/%Y'),
+                                                datetime.now().replace(day=min(day + 10, datetime.now().day)).strftime(
+                                                    '%d/%m/%Y'))
+                _LOGGER.debug('data={0}'.format(json.dumps(data, indent=2)))
+            data = [d for d in data if
+                    datetime.strptime(d['time'], '%d/%m/%Y') >= datetime.now().replace(day=1, hour=0, minute=0,
+                                                                                       second=0, microsecond=0)]
+            data = list({item['time']: item for item in data}.values())
 
             last_kwh = int(data[-1]['kwh'])
             month_kwh = sum([int(d['kwh']) for d in data])

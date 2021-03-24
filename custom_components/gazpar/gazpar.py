@@ -212,8 +212,9 @@ class Gazpar:
         # We send the session token so that the server knows who we are
         payload = {
             'javax.faces.partial.ajax': 'true',
-            'javax.faces.source': '_eConsoconsoDetaille_WAR_eConsoportlet_:idFormConsoDetaille:panelTypeGranularite1:2',
-            'javax.faces.partial.execute': '_eConsoconsoDetaille_WAR_eConsoportlet_:idFormConsoDetaille:panelTypeGranularite1',
+            'javax.faces.source': '_eConsoconsoDetaille_WAR_eConsoportlet_:idFormConsoDetaille:j_idt47',
+            '_eConsoconsoDetaille_WAR_eConsoportlet_:idFormConsoDetaille:j_idt47': '_eConsoconsoDetaille_WAR_eConsoportlet_:idFormConsoDetaille:j_idt47',
+            'javax.faces.partial.execute': '_eConsoconsoDetaille_WAR_eConsoportlet_:idFormConsoDetaille:idPanelDatesConsoDetaille',
             'javax.faces.partial.render': '_eConsoconsoDetaille_WAR_eConsoportlet_:idFormConsoDetaille:refreshHighchart _eConsoconsoDetaille_WAR_eConsoportlet_:idFormConsoDetaille:updateDatesBean _eConsoconsoDetaille_WAR_eConsoportlet_:idFormConsoDetaille:boutonTelechargerDonnees _eConsoconsoDetaille_WAR_eConsoportlet_:idFormConsoDetaille:panelTypeGranularite _eConsoconsoDetaille_WAR_eConsoportlet_:idFormConsoDetaille:idBlocSeuilParametrage',
             'javax.faces.behavior.event': 'valueChange',
             'javax.faces.partial.event': 'change',
@@ -222,7 +223,7 @@ class Gazpar:
             '_eConsoconsoDetaille_WAR_eConsoportlet_:idFormConsoDetaille:idDateDebutConsoDetaille': start_date,
             '_eConsoconsoDetaille_WAR_eConsoportlet_:idFormConsoDetaille:idDateFinConsoDetaille': end_date,
             '_eConsoconsoDetaille_WAR_eConsoportlet_:idFormConsoDetaille:panelTypeGranularite1': resource_id.lower(),
-            '_eConsoconsoDetaille_WAR_eConsoportlet_:idFormConsoDetaille:panelTypeGranularite3': 'mois',
+            '_eConsoconsoDetaille_WAR_eConsoportlet_:idFormConsoDetaille:panelTypeGranularite3': 'jour',
             '_eConsoconsoDetaille_WAR_eConsoportlet_:idFormConsoDetaille:selecteurVolumeType2': 'kwh',
             '_eConsoconsoDetaille_WAR_eConsoportlet_:idFormConsoDetaille:selecteurVolumeType4': 'kwh',
             'javax.faces.ViewState': self.javavxs
