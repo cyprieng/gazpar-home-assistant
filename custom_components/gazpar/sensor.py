@@ -91,31 +91,15 @@ class GazparAccount:
             # Get full month data
             gazpar = Gazpar(self._username, self._password)
 
-            data = []
             now = datetime.now()
             last_month = now.month - 1 if now.month != 1 else 12
-            last_day = monthrange(now.year, last_month)[1]
-            for day in range(1, last_day, 10):
-                data += gazpar.get_data_per_day(now.replace(month=last_month, day=day).strftime('%d/%m/%Y'),
-                                                now.replace(month=last_month, day=min(day + 10, last_day)).strftime('%d/%m/%Y'))
-            for day in range(1, now.day, 10):
-                data += gazpar.get_data_per_day(now.replace(day=day).strftime('%d/%m/%Y'),
-                                                now.replace(day=min(day + 10, now.day)).strftime('%d/%m/%Y'))
-            data_current_month = [d for d in data if
-                                  datetime.strptime(d['time'], '%d/%m/%Y') >= now.replace(day=1, hour=0, minute=0, second=0,
-                                                                                          microsecond=0)]
-            data_last_month = [d for d in data if
-                               datetime.strptime(d['time'], '%d/%m/%Y') >= now.replace(month=last_month, day=1, hour=0, minute=0,
-                                                                                       second=0, microsecond=0) and
-                               datetime.strptime(d['time'], '%d/%m/%Y') <= now.replace(month=last_month, day=last_day, hour=0,
-                                                                                       minute=0, second=0, microsecond=0)]
-            data_current_month = list({item['time']: item for item in data_current_month}.values())
-            data_last_month = list({item['time']: item for item in data_last_month}.values())
+            month_data = gazpar.get_data_per_month(now.replace(month=last_month).strftime('%d/%m/%Y'), now.strftime('%d/%m/%Y'))
+            last_day_data = gazpar.get_data_per_day(now.replace(day=now.day - 1).strftime('%d/%m/%Y'), now.strftime('%d/%m/%Y'))
 
-            last_kwh = int(data_current_month[-1]['kwh'])
-            month_kwh = sum([int(d['kwh']) for d in data_current_month])
-            last_month_kwh = sum([int(d['kwh']) for d in data_last_month])
-            timestamp = datetime.strptime(data_current_month[-1]['time'], '%d/%m/%Y')
+            last_kwh = int(last_day_data[-1]['kwh'])
+            month_kwh = int(month_data[-1]['kwh'])
+            last_month_kwh = int(month_data[-2]['kwh'])
+            timestamp = datetime.strptime(last_day_data[-1]['time'], '%d/%m/%Y')
 
             # Update sensors
             for sensor in self.sensors:

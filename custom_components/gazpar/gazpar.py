@@ -124,25 +124,13 @@ class Gazpar:
         if 'GRDF_EP' not in self.session.cookies:
             raise GazparLoginException('Login unsuccessful. Check your credentials.')
 
-    def get_data_per_hour(self, start_date, end_date):
-        """Retrieve hourly energy consumption data."""
-        return self._get_data('Heure', start_date, end_date)
-
     def get_data_per_day(self, start_date, end_date):
         """Retrieve daily energy consumption data."""
         return self._get_data('Jour', start_date, end_date)
 
-    def get_data_per_week(self, start_date, end_date):
-        """Retrieve weekly energy consumption data."""
-        return self._get_data('Semaine', start_date, end_date)
-
     def get_data_per_month(self, start_date, end_date):
         """Retrieve monthly energy consumption data."""
         return self._get_data('Mois', start_date, end_date)
-
-    def get_data_per_year(self):
-        """Retrieve yearly energy consumption data."""
-        return self._get_data('Mois')
 
     @retry(Exception, tries=4, delay=60, backoff=3)
     def _get_data(self, resource_id, start_date=None, end_date=None):
@@ -212,9 +200,8 @@ class Gazpar:
         # We send the session token so that the server knows who we are
         payload = {
             'javax.faces.partial.ajax': 'true',
-            'javax.faces.source': '_eConsoconsoDetaille_WAR_eConsoportlet_:idFormConsoDetaille:j_idt47',
-            '_eConsoconsoDetaille_WAR_eConsoportlet_:idFormConsoDetaille:j_idt47': '_eConsoconsoDetaille_WAR_eConsoportlet_:idFormConsoDetaille:j_idt47',
-            'javax.faces.partial.execute': '_eConsoconsoDetaille_WAR_eConsoportlet_:idFormConsoDetaille:idPanelDatesConsoDetaille',
+            'javax.faces.source': '_eConsoconsoDetaille_WAR_eConsoportlet_:idFormConsoDetaille:panelTypeGranularite1:0',
+            'javax.faces.partial.execute': '_eConsoconsoDetaille_WAR_eConsoportlet_:idFormConsoDetaille:panelTypeGranularite1',
             'javax.faces.partial.render': '_eConsoconsoDetaille_WAR_eConsoportlet_:idFormConsoDetaille:refreshHighchart _eConsoconsoDetaille_WAR_eConsoportlet_:idFormConsoDetaille:updateDatesBean _eConsoconsoDetaille_WAR_eConsoportlet_:idFormConsoDetaille:boutonTelechargerDonnees _eConsoconsoDetaille_WAR_eConsoportlet_:idFormConsoDetaille:panelTypeGranularite _eConsoconsoDetaille_WAR_eConsoportlet_:idFormConsoDetaille:idBlocSeuilParametrage',
             'javax.faces.behavior.event': 'valueChange',
             'javax.faces.partial.event': 'change',
