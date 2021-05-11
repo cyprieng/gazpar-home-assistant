@@ -1,5 +1,5 @@
+from calendar import monthrange
 from datetime import timedelta, datetime
-import json
 import logging
 import traceback
 
@@ -32,6 +32,8 @@ HA_LAST_ENERGY_KWH = 'Gazpar energy'
 HA_LAST_ENERGY_PRICE = 'Gazpar energy price'
 HA_MONTH_ENERGY_KWH = 'Gazpar energy month'
 HA_MONTH_ENERGY_PRICE = 'Gazpar energy month price'
+HA_LAST_MONTH_ENERGY_KWH = 'Gazpar energy last month'
+HA_LAST_MONTH_ENERGY_PRICE = 'Gazpar energy last month price'
 
 PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend({
     vol.Required(CONF_USERNAME): cv.string,
@@ -75,6 +77,8 @@ class GazparAccount:
         self.sensors.append(GazparSensor(HA_LAST_ENERGY_PRICE, CURRENCY_EURO))
         self.sensors.append(GazparSensor(HA_MONTH_ENERGY_KWH, ENERGY_KILO_WATT_HOUR))
         self.sensors.append(GazparSensor(HA_MONTH_ENERGY_PRICE, CURRENCY_EURO))
+        self.sensors.append(GazparSensor(HA_LAST_MONTH_ENERGY_KWH, ENERGY_KILO_WATT_HOUR))
+        self.sensors.append(GazparSensor(HA_LAST_MONTH_ENERGY_PRICE, CURRENCY_EURO))
 
         track_time_interval(hass, self.update_gazpar_data, DEFAULT_SCAN_INTERVAL)
 
@@ -88,19 +92,30 @@ class GazparAccount:
             gazpar = Gazpar(self._username, self._password)
 
             data = []
-            for day in range(1, datetime.now().day, 10):
-                data += gazpar.get_data_per_day(datetime.now().replace(day=day).strftime('%d/%m/%Y'),
-                                                datetime.now().replace(day=min(day + 10, datetime.now().day)).strftime(
-                                                    '%d/%m/%Y'))
-                _LOGGER.debug('data={0}'.format(json.dumps(data, indent=2)))
-            data = [d for d in data if
-                    datetime.strptime(d['time'], '%d/%m/%Y') >= datetime.now().replace(day=1, hour=0, minute=0,
-                                                                                       second=0, microsecond=0)]
-            data = list({item['time']: item for item in data}.values())
+            now = datetime.now()
+            last_month = now.month - 1 if now.month != 1 else 12
+            last_day = monthrange(now.year, last_month)[1]
+            for day in range(1, last_day, 10):
+                data += gazpar.get_data_per_day(now.replace(month=last_month, day=day).strftime('%d/%m/%Y'),
+                                                now.replace(month=last_month, day=min(day + 10, last_day)).strftime('%d/%m/%Y'))
+            for day in range(1, now.day, 10):
+                data += gazpar.get_data_per_day(now.replace(day=day).strftime('%d/%m/%Y'),
+                                                now.replace(day=min(day + 10, now.day)).strftime('%d/%m/%Y'))
+            data_current_month = [d for d in data if
+                                  datetime.strptime(d['time'], '%d/%m/%Y') >= now.replace(day=1, hour=0, minute=0, second=0,
+                                                                                          microsecond=0)]
+            data_last_month = [d for d in data if
+                               datetime.strptime(d['time'], '%d/%m/%Y') >= now.replace(month=last_month, day=1, hour=0, minute=0,
+                                                                                       second=0, microsecond=0) and
+                               datetime.strptime(d['time'], '%d/%m/%Y') <= now.replace(month=last_month, day=last_day, hour=0,
+                                                                                       minute=0, second=0, microsecond=0)]
+            data_current_month = list({item['time']: item for item in data_current_month}.values())
+            data_last_month = list({item['time']: item for item in data_last_month}.values())
 
-            last_kwh = int(data[-1]['kwh'])
-            month_kwh = sum([int(d['kwh']) for d in data])
-            timestamp = datetime.strptime(data[-1]['time'], '%d/%m/%Y')
+            last_kwh = int(data_current_month[-1]['kwh'])
+            month_kwh = sum([int(d['kwh']) for d in data_current_month])
+            last_month_kwh = sum([int(d['kwh']) for d in data_last_month])
+            timestamp = datetime.strptime(data_current_month[-1]['time'], '%d/%m/%Y')
 
             # Update sensors
             for sensor in self.sensors:
@@ -108,10 +123,14 @@ class GazparAccount:
                     sensor.set_data(timestamp, last_kwh)
                 if sensor.name == HA_MONTH_ENERGY_KWH:
                     sensor.set_data(timestamp, month_kwh)
+                if sensor.name == HA_LAST_MONTH_ENERGY_KWH:
+                    sensor.set_data(timestamp, last_month_kwh)
                 if sensor.name == HA_LAST_ENERGY_PRICE:
                     sensor.set_data(timestamp, round(last_kwh * self._cost, 4))
                 if sensor.name == HA_MONTH_ENERGY_PRICE:
                     sensor.set_data(timestamp, round(month_kwh * self._cost, 4))
+                if sensor.name == HA_LAST_MONTH_ENERGY_PRICE:
+                    sensor.set_data(timestamp, round(last_month_kwh * self._cost, 4))
 
                 sensor.async_schedule_update_ha_state(True)
                 _LOGGER.debug('HA notified that new data is available')
