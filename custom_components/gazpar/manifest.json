@@ -1,14 +1,11 @@
 {
   "domain": "gazpar",
   "name": "Gazpar",
-  "documentation": "",
-  "requirements": [
-    "requests==2.24.0",
-    "lxml==4.6.1"
-  ],
+  "documentation": "https://github.com/cyprieng/gazpar-home-assistant",
+  "issue_tracker": "https://github.com/cyprieng/gazpar-home-assistant/issues",
   "dependencies": [],
-  "codeowners": [
-    "cyprieng"
-  ],
-  "version": "0.0.2"
+  "version": "0.0.3",
+  "codeowners": ["cyprieng"],
+  "requirements": ["requests==2.25.1", "lxml==4.6.3"],
+  "iot_class": "cloud_polling"
 }
