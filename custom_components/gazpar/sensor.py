@@ -104,9 +104,9 @@ class GazparAccount:
             last_kwh = int(last_day_data[-1]['kwh'])
             month_kwh = int(month_data[-1]['kwh'])
             last_month_kwh = int(month_data[-2]['kwh'])
-            last_m3 = int(last_day_data_m3[-1]['kwh'])
-            month_m3 = int(month_data_m3[-1]['kwh'])
-            last_month_m3 = int(month_data_m3[-2]['kwh'])
+            last_m3 = float(last_day_data_m3[-1]['kwh'])
+            month_m3 = float(month_data_m3[-1]['kwh'])
+            last_month_m3 = float(month_data_m3[-2]['kwh'])
             timestamp = datetime.strptime(last_day_data[-1]['time'], '%d/%m/%Y')
 
             # Update sensors
