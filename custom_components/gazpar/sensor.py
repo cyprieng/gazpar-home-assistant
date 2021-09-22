@@ -9,7 +9,7 @@ import voluptuous as vol
 from homeassistant.components.sensor import PLATFORM_SCHEMA
 from homeassistant.const import (
     ATTR_ATTRIBUTION, CONF_PASSWORD, CONF_USERNAME,
-    ENERGY_KILO_WATT_HOUR, CURRENCY_EURO)
+    ENERGY_KILO_WATT_HOUR, VOLUME_CUBIC_METERS, CURRENCY_EURO)
 import homeassistant.helpers.config_validation as cv
 from homeassistant.helpers.entity import Entity
 from homeassistant.helpers.event import track_time_interval, call_later
@@ -77,13 +77,13 @@ class GazparAccount:
 
         # Add sensors
         self.sensors.append(GazparSensor(HA_LAST_ENERGY_KWH, ENERGY_KILO_WATT_HOUR))
-        self.sensors.append(GazparSensor(HA_LAST_ENERGY_M3, ENERGY_KILO_WATT_HOUR))
+        self.sensors.append(GazparSensor(HA_LAST_ENERGY_M3, VOLUME_CUBIC_METERS))
         self.sensors.append(GazparSensor(HA_LAST_ENERGY_PRICE, CURRENCY_EURO))
         self.sensors.append(GazparSensor(HA_MONTH_ENERGY_KWH, ENERGY_KILO_WATT_HOUR))
-        self.sensors.append(GazparSensor(HA_MONTH_ENERGY_M3, ENERGY_KILO_WATT_HOUR))
+        self.sensors.append(GazparSensor(HA_MONTH_ENERGY_M3, VOLUME_CUBIC_METERS))
         self.sensors.append(GazparSensor(HA_MONTH_ENERGY_PRICE, CURRENCY_EURO))
         self.sensors.append(GazparSensor(HA_LAST_MONTH_ENERGY_KWH, ENERGY_KILO_WATT_HOUR))
-        self.sensors.append(GazparSensor(HA_LAST_MONTH_ENERGY_M3, ENERGY_KILO_WATT_HOUR))
+        self.sensors.append(GazparSensor(HA_LAST_MONTH_ENERGY_M3, VOLUME_CUBIC_METERS))
         self.sensors.append(GazparSensor(HA_LAST_MONTH_ENERGY_PRICE, CURRENCY_EURO))
 
         track_time_interval(hass, self.update_gazpar_data, DEFAULT_SCAN_INTERVAL)
