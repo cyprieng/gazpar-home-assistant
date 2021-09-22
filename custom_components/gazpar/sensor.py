@@ -6,12 +6,11 @@ import traceback
 from custom_components.gazpar.gazpar import Gazpar
 import voluptuous as vol
 
-from homeassistant.components.sensor import PLATFORM_SCHEMA
+from homeassistant.components.sensor import PLATFORM_SCHEMA, SensorEntity, STATE_CLASS_TOTAL_INCREASING
 from homeassistant.const import (
     ATTR_ATTRIBUTION, CONF_PASSWORD, CONF_USERNAME,
     ENERGY_KILO_WATT_HOUR, VOLUME_CUBIC_METERS, CURRENCY_EURO)
 import homeassistant.helpers.config_validation as cv
-from homeassistant.helpers.entity import Entity
 from homeassistant.helpers.event import track_time_interval, call_later
 
 _LOGGER = logging.getLogger(__name__)
@@ -144,7 +143,7 @@ class GazparAccount:
         return self._username
 
 
-class GazparSensor(Entity):
+class GazparSensor(SensorEntity):
     """Representation of a sensor entity for Gazpar."""
 
     def __init__(self, name, unit):
@@ -153,6 +152,9 @@ class GazparSensor(Entity):
         self._unit = unit
         self._timestamp = None
         self._measure = None
+
+        if self._name in [HA_MONTH_ENERGY_KWH, HA_MONTH_ENERGY_M3]:
+            self._attr_state_class = STATE_CLASS_TOTAL_INCREASING
 
     @property
     def name(self):
