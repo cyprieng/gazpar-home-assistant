@@ -77,10 +77,13 @@ class GazparAccount:
 
         # Add sensors
         self.sensors.append(GazparSensor(HA_LAST_ENERGY_KWH, ENERGY_KILO_WATT_HOUR))
+        self.sensors.append(GazparSensor(HA_LAST_ENERGY_M3, ENERGY_KILO_WATT_HOUR))
         self.sensors.append(GazparSensor(HA_LAST_ENERGY_PRICE, CURRENCY_EURO))
         self.sensors.append(GazparSensor(HA_MONTH_ENERGY_KWH, ENERGY_KILO_WATT_HOUR))
+        self.sensors.append(GazparSensor(HA_MONTH_ENERGY_M3, ENERGY_KILO_WATT_HOUR))
         self.sensors.append(GazparSensor(HA_MONTH_ENERGY_PRICE, CURRENCY_EURO))
         self.sensors.append(GazparSensor(HA_LAST_MONTH_ENERGY_KWH, ENERGY_KILO_WATT_HOUR))
+        self.sensors.append(GazparSensor(HA_LAST_MONTH_ENERGY_M3, ENERGY_KILO_WATT_HOUR))
         self.sensors.append(GazparSensor(HA_LAST_MONTH_ENERGY_PRICE, CURRENCY_EURO))
 
         track_time_interval(hass, self.update_gazpar_data, DEFAULT_SCAN_INTERVAL)
@@ -169,7 +172,8 @@ class GazparSensor(Entity):
     @property
     def icon(self):
         """Return the icon of the sensor."""
-        if self._name in [HA_MONTH_ENERGY_KWH, HA_LAST_ENERGY_KWH]:
+        if self._name in [HA_MONTH_ENERGY_KWH, HA_LAST_ENERGY_KWH, HA_LAST_MONTH_ENERGY_KWH,
+                          HA_MONTH_ENERGY_M3, HA_LAST_ENERGY_M3, HA_LAST_MONTH_ENERGY_M3]:
             return ICON_GAS
         else:
             return ICON_PRICE
