@@ -29,10 +29,13 @@ ICON_GAS = 'mdi:fire'
 ICON_PRICE = 'mdi:currency-eur'
 
 HA_LAST_ENERGY_KWH = 'Gazpar energy'
+HA_LAST_ENERGY_M3 = 'Gazpar energy m³'
 HA_LAST_ENERGY_PRICE = 'Gazpar energy price'
 HA_MONTH_ENERGY_KWH = 'Gazpar energy month'
+HA_MONTH_ENERGY_M3 = 'Gazpar energy month m³'
 HA_MONTH_ENERGY_PRICE = 'Gazpar energy month price'
 HA_LAST_MONTH_ENERGY_KWH = 'Gazpar energy last month'
+HA_LAST_MONTH_ENERGY_M3 = 'Gazpar energy last month m³'
 HA_LAST_MONTH_ENERGY_PRICE = 'Gazpar energy last month price'
 
 PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend({
@@ -95,10 +98,15 @@ class GazparAccount:
             last_month = now.month - 1 if now.month != 1 else 12
             month_data = gazpar.get_data_per_month(now.replace(month=last_month).strftime('%d/%m/%Y'), now.strftime('%d/%m/%Y'))
             last_day_data = gazpar.get_data_per_day(now.replace(day=now.day - 1).strftime('%d/%m/%Y'), now.strftime('%d/%m/%Y'))
+            month_data_m3 = gazpar.get_data_per_month(now.replace(month=last_month).strftime('%d/%m/%Y'), now.strftime('%d/%m/%Y'), True)
+            last_day_data_m3 = gazpar.get_data_per_day(now.replace(day=now.day - 1).strftime('%d/%m/%Y'), now.strftime('%d/%m/%Y'), True)
 
             last_kwh = int(last_day_data[-1]['kwh'])
             month_kwh = int(month_data[-1]['kwh'])
             last_month_kwh = int(month_data[-2]['kwh'])
+            last_m3 = int(last_day_data_m3[-1]['kwh'])
+            month_m3 = int(month_data_m3[-1]['kwh'])
+            last_month_m3 = int(month_data_m3[-2]['kwh'])
             timestamp = datetime.strptime(last_day_data[-1]['time'], '%d/%m/%Y')
 
             # Update sensors
@@ -109,6 +117,12 @@ class GazparAccount:
                     sensor.set_data(timestamp, month_kwh)
                 if sensor.name == HA_LAST_MONTH_ENERGY_KWH:
                     sensor.set_data(timestamp, last_month_kwh)
+                if sensor.name == HA_LAST_ENERGY_M3:
+                    sensor.set_data(timestamp, last_m3)
+                if sensor.name == HA_MONTH_ENERGY_M3:
+                    sensor.set_data(timestamp, month_m3)
+                if sensor.name == HA_LAST_MONTH_ENERGY_M3:
+                    sensor.set_data(timestamp, last_month_m3)
                 if sensor.name == HA_LAST_ENERGY_PRICE:
                     sensor.set_data(timestamp, round(last_kwh * self._cost, 4))
                 if sensor.name == HA_MONTH_ENERGY_PRICE:

@@ -124,16 +124,16 @@ class Gazpar:
         if 'GRDF_EP' not in self.session.cookies:
             raise GazparLoginException('Login unsuccessful. Check your credentials.')
 
-    def get_data_per_day(self, start_date, end_date):
+    def get_data_per_day(self, start_date, end_date, mcube=False):
         """Retrieve daily energy consumption data."""
-        return self._get_data('Jour', start_date, end_date)
+        return self._get_data('Jour', start_date, end_date, mcube)
 
-    def get_data_per_month(self, start_date, end_date):
+    def get_data_per_month(self, start_date, end_date, mcube=False):
         """Retrieve monthly energy consumption data."""
-        return self._get_data('Mois', start_date, end_date)
+        return self._get_data('Mois', start_date, end_date, mcube)
 
     @retry(Exception, tries=4, delay=60, backoff=3)
-    def _get_data(self, resource_id, start_date=None, end_date=None):
+    def _get_data(self, resource_id, start_date=None, end_date=None, mcube=False):
         """Get gazpar data
 
         Args:
@@ -200,8 +200,8 @@ class Gazpar:
         # We send the session token so that the server knows who we are
         payload = {
             'javax.faces.partial.ajax': 'true',
-            'javax.faces.source': '_eConsoconsoDetaille_WAR_eConsoportlet_:idFormConsoDetaille:panelTypeGranularite1:0',
-            'javax.faces.partial.execute': '_eConsoconsoDetaille_WAR_eConsoportlet_:idFormConsoDetaille:panelTypeGranularite1',
+            'javax.faces.source': '_eConsoconsoDetaille_WAR_eConsoportlet_:idFormConsoDetaille:selecteurVolumeType2:1' if mcube else '_eConsoconsoDetaille_WAR_eConsoportlet_:idFormConsoDetaille:panelTypeGranularite1:0',
+            'javax.faces.partial.execute': '_eConsoconsoDetaille_WAR_eConsoportlet_:idFormConsoDetaille:selecteurVolumeType2' if mcube else '_eConsoconsoDetaille_WAR_eConsoportlet_:idFormConsoDetaille:panelTypeGranularite1',
             'javax.faces.partial.render': '_eConsoconsoDetaille_WAR_eConsoportlet_:idFormConsoDetaille:refreshHighchart _eConsoconsoDetaille_WAR_eConsoportlet_:idFormConsoDetaille:updateDatesBean _eConsoconsoDetaille_WAR_eConsoportlet_:idFormConsoDetaille:boutonTelechargerDonnees _eConsoconsoDetaille_WAR_eConsoportlet_:idFormConsoDetaille:panelTypeGranularite _eConsoconsoDetaille_WAR_eConsoportlet_:idFormConsoDetaille:idBlocSeuilParametrage',
             'javax.faces.behavior.event': 'valueChange',
             'javax.faces.partial.event': 'change',
@@ -211,7 +211,7 @@ class Gazpar:
             '_eConsoconsoDetaille_WAR_eConsoportlet_:idFormConsoDetaille:idDateFinConsoDetaille': end_date,
             '_eConsoconsoDetaille_WAR_eConsoportlet_:idFormConsoDetaille:panelTypeGranularite1': resource_id.lower(),
             '_eConsoconsoDetaille_WAR_eConsoportlet_:idFormConsoDetaille:panelTypeGranularite3': 'jour',
-            '_eConsoconsoDetaille_WAR_eConsoportlet_:idFormConsoDetaille:selecteurVolumeType2': 'kwh',
+            '_eConsoconsoDetaille_WAR_eConsoportlet_:idFormConsoDetaille:selecteurVolumeType2': 'mcube' if mcube else 'kwh',
             '_eConsoconsoDetaille_WAR_eConsoportlet_:idFormConsoDetaille:selecteurVolumeType4': 'kwh',
             'javax.faces.ViewState': self.javavxs
         }
