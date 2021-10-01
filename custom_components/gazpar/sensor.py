@@ -99,9 +99,9 @@ class GazparAccount:
             now = datetime.now()
             last_month = now.month - 1 if now.month != 1 else 12
             month_data = gazpar.get_data_per_month(now.replace(month=last_month).strftime('%d/%m/%Y'), now.strftime('%d/%m/%Y'))
-            last_day_data = gazpar.get_data_per_day(now.replace(day=now.day - 1).strftime('%d/%m/%Y'), now.strftime('%d/%m/%Y'))
+            last_day_data = gazpar.get_data_per_day((now - timedelta(days=1)).strftime('%d/%m/%Y'), now.strftime('%d/%m/%Y'))
             month_data_m3 = gazpar.get_data_per_month(now.replace(month=last_month).strftime('%d/%m/%Y'), now.strftime('%d/%m/%Y'), True)
-            last_day_data_m3 = gazpar.get_data_per_day(now.replace(day=now.day - 1).strftime('%d/%m/%Y'), now.strftime('%d/%m/%Y'), True)
+            last_day_data_m3 = gazpar.get_data_per_day((now - timedelta(days=1)).strftime('%d/%m/%Y'), now.strftime('%d/%m/%Y'), True)
 
             last_kwh = int(last_day_data[-1]['kwh'])
             month_kwh = int(month_data[-1]['kwh'])
