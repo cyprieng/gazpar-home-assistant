@@ -1,9 +1,6 @@
 # Gazpar home assistant
 
-This module show your Gazpar consumption inside home assistant:
-![Gazpar home assistant](https://user-images.githubusercontent.com/2521188/97164903-22fb9600-1783-11eb-9636-50f166eb47a0.png)
-
-It is based on [empierre/domoticz_gaspar](https://github.com/empierre/domoticz_gaspar).
+This module show your Gazpar consumption inside home assistant.
 
 
 ## Install
@@ -25,12 +22,8 @@ sensor:
   - platform: gazpar
     username: !secret gazpar.username
     password: !secret gazpar.password
-    cost: 0.0539  # Cost per kWh
+    pce: 1234567890  # PCE identifier (can be found on grdf.fr)
 ```
 
-This will create 4 sensors:
-* last day kWh
-* last day EUR
-* current month kWh
-* current month EUR
+This will create a kwh index sensor that can be used in HA energy.
  
