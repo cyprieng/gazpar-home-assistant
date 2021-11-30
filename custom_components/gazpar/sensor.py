@@ -8,7 +8,7 @@ import voluptuous as vol
 from homeassistant.components.sensor import PLATFORM_SCHEMA, SensorEntity, STATE_CLASS_TOTAL_INCREASING
 from homeassistant.const import (
     CONF_PASSWORD, CONF_USERNAME,
-    VOLUME_CUBIC_METERS, DEVICE_CLASS_ENERGY)
+    VOLUME_CUBIC_METERS, ENERGY_KILO_WATT_HOUR, DEVICE_CLASS_ENERGY)
 import homeassistant.helpers.config_validation as cv
 from homeassistant.helpers.event import track_time_interval, call_later
 
@@ -20,6 +20,7 @@ DEFAULT_SCAN_INTERVAL = timedelta(hours=4)
 CONF_PCE = 'pce'
 
 HA_INDEX_ENERGY_M3 = 'Gazpar m3'
+HA_INDEX_ENERGY_KWH = 'Gazpar kwh'
 
 # Config
 PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend({
@@ -60,6 +61,7 @@ class GazparAccount:
         call_later(hass, 5, self.update_gazpar_data)
 
         # Add sensors
+        self.sensors.append(GazparSensor(HA_INDEX_ENERGY_KWH, ENERGY_KILO_WATT_HOUR))
         self.sensors.append(GazparSensor(HA_INDEX_ENERGY_M3, VOLUME_CUBIC_METERS))
 
         track_time_interval(hass, self.update_gazpar_data, DEFAULT_SCAN_INTERVAL)
@@ -71,12 +73,14 @@ class GazparAccount:
         try:
             # Get full month data
             gazpar = Gazpar(self._username, self._password, self._pce)
-            index_m3 = gazpar.get_consumption()
+            index_m3, index_kwh = gazpar.get_consumption()
 
             # Update sensors
             for sensor in self.sensors:
                 if sensor.name == HA_INDEX_ENERGY_M3:
                     sensor.set_data(index_m3)
+                if sensor.name == HA_INDEX_ENERGY_KWH:
+                    sensor.set_data(index_kwh)
 
                 sensor.async_schedule_update_ha_state(True)
                 _LOGGER.debug('Gazpar data updatede')
