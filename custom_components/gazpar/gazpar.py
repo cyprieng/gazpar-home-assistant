@@ -67,7 +67,7 @@ class Gazpar:
         session = requests.Session()
 
         # Login
-        login_response = session.post('https://login.monespace.grdf.fr/sofit-account-api/api/v1/auth', data={
+        session.post('https://login.monespace.grdf.fr/sofit-account-api/api/v1/auth', data={
             'email': self.username,
             'password': self.password,
             'capp': 'meg',
@@ -75,13 +75,21 @@ class Gazpar:
         })
 
         # First request never returns data
+        start_date = datetime.datetime.now().date().replace(month=1, day=1).strftime('%Y-%m-%d')
         url = 'https://monespace.grdf.fr/api/e-conso/pce/consommation/informatives?dateDebut={0}&dateFin={1}&pceList%5B%5D={2}'.format(
-            (datetime.datetime.now() - datetime.timedelta(days=7)).strftime('%Y-%m-%d'),
+            start_date,
             datetime.datetime.now().strftime('%Y-%m-%d'),
             self.pce)
         print(url)
         session.get(url)
 
         # Get data
-        response = session.get(url)
-        return response.json()[self.pce]['releves'][-1]['indexFin']
+        response = session.get(url).json()
+        index_m3 = response[self.pce]['releves'][-1]['indexFin']
+        index_kwh = 0
+        for data in response[self.pce]['releves']:
+            if data['energieConsomme'] and data['journeeGaziere'] >= start_date:
+                index_kwh += data['energieConsomme']
+
+        return index_m3, index_kwh
+
