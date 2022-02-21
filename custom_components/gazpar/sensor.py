@@ -102,7 +102,10 @@ class GazparSensor(SensorEntity):
         self._unit = unit
         self._measure = None
         self._attr_state_class = STATE_CLASS_TOTAL_INCREASING
-        self._attr_device_class = DEVICE_CLASS_ENERGY
+        if name == HA_INDEX_ENERGY_M3:
+            self._attr_device_class = DEVICE_CLASS_GAZ
+        else:
+            self._attr_device_class = DEVICE_CLASS_ENERGY
 
     @property
     def name(self):
