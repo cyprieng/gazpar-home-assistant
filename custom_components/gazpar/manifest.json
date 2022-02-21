@@ -6,6 +6,6 @@
   "dependencies": [],
   "version": "0.0.3",
   "codeowners": ["cyprieng"],
-  "requirements": ["requests==2.25.1"],
+  "requirements": ["requests>=2.25.1"],
   "iot_class": "cloud_polling"
 }
