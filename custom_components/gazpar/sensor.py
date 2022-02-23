@@ -8,7 +8,7 @@ import voluptuous as vol
 from homeassistant.components.sensor import PLATFORM_SCHEMA, SensorEntity, STATE_CLASS_TOTAL_INCREASING
 from homeassistant.const import (
     CONF_PASSWORD, CONF_USERNAME,
-    VOLUME_CUBIC_METERS, ENERGY_KILO_WATT_HOUR, DEVICE_CLASS_ENERGY)
+    VOLUME_CUBIC_METERS, ENERGY_KILO_WATT_HOUR, DEVICE_CLASS_ENERGY, DEVICE_CLASS_GAS)
 import homeassistant.helpers.config_validation as cv
 from homeassistant.helpers.event import track_time_interval, call_later
 
