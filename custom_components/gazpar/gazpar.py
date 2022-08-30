@@ -1,4 +1,5 @@
 import datetime
+from urllib.parse import parse_qs, urlparse
 
 import requests
 from functools import wraps
@@ -66,12 +67,32 @@ class Gazpar:
     def get_consumption(self):
         session = requests.Session()
 
+        # Default headers
+        session.headers.update(
+            {
+                "User-Agent": "Mozilla/5.0"
+                              " (Linux; Android 6.0; Nexus 5 Build/MRA58N)"
+                              " AppleWebKit/537.36 (KHTML, like Gecko)"
+                              " Chrome/61.0.3163.100 Mobile Safari/537.36",
+                "Accept-Encoding": "gzip, deflate, br",
+                "Accept": "application/json, */*",
+                "Connection": "keep-alive",
+                "domain": "grdf.fr",
+            }
+        )
+
+        # Get redirect url
+        res = session.get('https://monespace.grdf.fr/client/particulier/accueil')
+        parsed_url = urlparse(res.url)
+        goto_url = parse_qs(parsed_url.query)['goto'][0]
+
         # Login
         session.post('https://login.monespace.grdf.fr/sofit-account-api/api/v1/auth', data={
             'email': self.username,
             'password': self.password,
             'capp': 'meg',
-            'goto': 'https://sofa-connexion.grdf.fr:443/openam/oauth2/externeGrdf/authorize?response_type=code&scope=openid%20profile%20email%20infotravaux%20%2Fv1%2Faccreditation%20%2Fv1%2Faccreditations%20%2Fdigiconso%2Fv1%20%2Fdigiconso%2Fv1%2Fconsommations%20new_meg&client_id=prod_espaceclient&state=0&redirect_uri=https%3A%2F%2Fmonespace.grdf.fr%2F_codexch&nonce=skywsNPCVa-AeKo1Rps0HjMVRNbUqA46j7XYA4tImeI&by_pass_okta=1&capp=meg'
+            'goto': goto_url,
+            'byPassStatus': 'Active'
         })
 
         # First request never returns data
@@ -92,4 +113,3 @@ class Gazpar:
                 index_kwh += data['energieConsomme']
 
         return index_m3, index_kwh
-
